@@ -175,6 +175,10 @@ public struct YPConfigLibrary {
     /// Set the number of items per row in collection view. Defaults to 4.
     public var numberOfItemsInRow: Int = 4
 
+    /// Defines if the video should be automatically cropped to square when added.
+    /// Defaults to true
+    public var shouldCropToSquare: Bool = true
+
     /// Set the spacing between items in collection view. Defaults to 1.0.
     public var spacingBetweenItems: CGFloat = 1.0
 
