@@ -375,14 +375,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
         if fitsVideoLengthLimits(asset: asset) == true {
             delegate?.libraryViewStartedLoading()
             let normalizedCropRect = withCropRect ?? DispatchQueue.main.sync { v.currentCropRect() }
-            let ts = targetSize(for: asset, cropRect: normalizedCropRect)
-            let xCrop: CGFloat = normalizedCropRect.origin.x * CGFloat(asset.pixelWidth)
-            let yCrop: CGFloat = normalizedCropRect.origin.y * CGFloat(asset.pixelHeight)
-            let resultCropRect = CGRect(x: xCrop,
-                                        y: yCrop,
-                                        width: ts.width,
-                                        height: ts.height)
-            mediaManager.fetchVideoUrlAndCrop(for: asset, cropRect: resultCropRect, callback: callback)
+            mediaManager.fetchVideoUrlAndCrop(for: asset, normalizedCropRect: normalizedCropRect, callback: callback)
         }
     }
     
