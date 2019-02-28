@@ -23,7 +23,9 @@ class YPAssetViewContainer: UIView {
     public var isShown = true
     
     private let spinner = UIActivityIndicatorView(style: .white)
-    private var shouldCropToSquare = true
+    private var shouldCropToSquare = YPConfig.library.shouldCropToSquare
+    private var hideCropToSquare = YPConfig.library.hideCropToSquare
+
     private var isMultipleSelection = false
 
     override func awakeFromNib() {
@@ -66,7 +68,7 @@ class YPAssetViewContainer: UIView {
         curtain.backgroundColor = UIColor.black.withAlphaComponent(0.7)
         curtain.alpha = 0
         
-        if !onlySquare {
+        if !onlySquare && !hideCropToSquare {
             // Crop Button
             squareCropButton.setImage(YPConfig.icons.cropIcon, for: .normal)
             sv(squareCropButton)
