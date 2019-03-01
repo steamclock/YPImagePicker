@@ -176,10 +176,18 @@ class LibraryMediaManager {
     }
 
     static private func cropRect(for track: AVAssetTrack, normalizedCropRect: CGRect) -> CGRect {
-        let x: CGFloat = normalizedCropRect.origin.x * CGFloat(track.naturalSize.width)
-        let y: CGFloat = normalizedCropRect.origin.y * CGFloat(track.naturalSize.height)
-        var width = (CGFloat(track.naturalSize.width) * normalizedCropRect.width).rounded(.toNearestOrEven)
-        var height = (CGFloat(track.naturalSize.height) * normalizedCropRect.height).rounded(.toNearestOrEven)
+        var rotation = track.preferredTransform
+        rotation.tx = 0
+        rotation.ty = 0
+
+        let rotatedSize = CGPoint(x: track.naturalSize.width, y: track.naturalSize.height).applying(rotation)
+        let trackWidth = abs(rotatedSize.x)
+        let trackHeight = abs(rotatedSize.y)
+
+        let x: CGFloat = normalizedCropRect.origin.x * CGFloat(trackWidth)
+        let y: CGFloat = normalizedCropRect.origin.y * CGFloat(trackHeight)
+        var width = (CGFloat(trackWidth) * normalizedCropRect.width).rounded(.toNearestOrEven)
+        var height = (CGFloat(trackHeight) * normalizedCropRect.height).rounded(.toNearestOrEven)
 
         // round to lowest even number
         width = (width.truncatingRemainder(dividingBy: 2) == 0) ? width : width - 1
