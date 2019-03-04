@@ -11,7 +11,7 @@ import Stevia
 
 class YPLoadingView: UIView {
     
-    let spinner = UIActivityIndicatorView(style: .whiteLarge)
+    let spinner = UIActivityIndicatorView(style: .gray)
     let processingLabel = UILabel()
     
     convenience init() {
@@ -31,7 +31,7 @@ class YPLoadingView: UIView {
         
         // Style
         backgroundColor = UIColor.black.withAlphaComponent(0.8)
-        processingLabel.textColor = .white
+        processingLabel.textColor = .lightGray
         spinner.hidesWhenStopped = true
         
         // Content
