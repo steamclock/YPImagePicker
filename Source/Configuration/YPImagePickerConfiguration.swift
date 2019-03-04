@@ -188,6 +188,9 @@ public struct YPConfigVideo {
     /// Choose the videoCompression.  Defaults to AVAssetExportPresetHighestQuality
     public var compression: String = AVAssetExportPresetHighestQuality
     
+    /// Choose whether users can select a cover while trimming a clip.
+    public var coverSelection: Bool = true
+
     /// Choose the result video extension if you trim or compress a video. Defaults to mov.
     public var fileType: AVFileType = .mov
     
