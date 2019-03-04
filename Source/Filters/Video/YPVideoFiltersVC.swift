@@ -82,6 +82,12 @@ public class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
                                                                action: #selector(cancel))
         }
         setupRightBarButtonItem()
+
+        // If cover selection is disabled, hide the trim and cover buttons
+        if !YPConfig.video.coverSelection {
+            trimBottomItem.isHidden = true
+            coverBottomItem.isHidden = true
+        }
     }
     
     override public func viewDidAppear(_ animated: Bool) {
