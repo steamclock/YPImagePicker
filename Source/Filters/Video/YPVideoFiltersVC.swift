@@ -15,6 +15,7 @@ public class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
     @IBOutlet weak var trimBottomItem: YPMenuItem!
     @IBOutlet weak var coverBottomItem: YPMenuItem!
     
+    @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var videoView: YPVideoView!
     @IBOutlet weak var trimmerView: TrimmerView!
     
@@ -99,7 +100,9 @@ public class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
         
         selectTrim()
         videoView.loadVideo(inputVideo)
-
+        updateTimeLabel()
+        startPlaybackTimeChecker()
+        
         super.viewDidAppear(animated)
     }
     
@@ -164,6 +167,7 @@ public class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
 
         trimmerView.isHidden = false
         videoView.isHidden = false
+        timeLabel.isHidden = false
         coverImageView.isHidden = true
         coverThumbSelectorView.isHidden = true
     }
@@ -176,6 +180,7 @@ public class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
         
         trimmerView.isHidden = true
         videoView.isHidden = true
+        timeLabel.isHidden = true
         coverImageView.isHidden = false
         coverThumbSelectorView.isHidden = false
         
@@ -233,6 +238,8 @@ public class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
         
         let playBackTime = videoView.player.currentTime()
         trimmerView.seek(to: playBackTime)
+
+        updateTimeLabel()
         
         if playBackTime >= endTime {
             videoView.player.seek(to: startTime,
@@ -240,6 +247,12 @@ public class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
                                   toleranceAfter: CMTime.zero)
             trimmerView.seek(to: startTime)
         }
+    }
+
+    private func updateTimeLabel() {
+        let currentTimeString = Double(round(10 * videoView.player.currentTime().seconds) / 10)
+        let endTimeString = Double(round(10 * (trimmerView.endTime?.seconds ?? 0)) / 10)
+        timeLabel.text = "\(currentTimeString)/\(endTimeString)"
     }
 }
 
@@ -256,6 +269,8 @@ extension YPVideoFiltersVC: TrimmerViewDelegate {
         stopPlaybackTimeChecker()
         videoView.pause()
         videoView.player.seek(to: playerTime, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero)
+
+        updateTimeLabel()
     }
 }
 
