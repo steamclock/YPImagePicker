@@ -151,13 +151,13 @@ extension YPVideoView {
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(playerItemDidReachEnd(_:)),
                                                name: .AVPlayerItemDidPlayToEndTime,
-                                               object: nil)
+                                               object: player)
     }
     
     /// Removes the observer for AVPlayerItemDidPlayToEndTime. Could be needed to implement own observer
     public func removeReachEndObserver() {
         NotificationCenter.default.removeObserver(self,
                                                   name: .AVPlayerItemDidPlayToEndTime,
-                                                  object: nil)
+                                                  object: player)
     }
 }
