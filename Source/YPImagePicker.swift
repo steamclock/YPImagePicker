@@ -61,6 +61,7 @@ public class YPImagePicker: UINavigationController {
         viewControllers = [picker]
         setupLoadingView()
         navigationBar.isTranslucent = false
+        interactivePopGestureRecognizer?.isEnabled = false
 
         picker.didSelectItems = { [weak self] items in
             let showsFilters = YPConfig.showsFilters

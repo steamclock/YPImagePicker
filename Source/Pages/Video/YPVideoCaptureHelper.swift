@@ -267,10 +267,7 @@ extension YPVideoCaptureHelper: AVCaptureFileOutputRecordingDelegate {
                            didFinishRecordingTo outputFileURL: URL,
                            from connections: [AVCaptureConnection],
                            error: Error?) {
-        YPVideoProcessor.cropToSquare(filePath: outputFileURL) { [weak self] url in
-            guard let _self = self, let u = url else { return }
-            _self.didCaptureVideo?(u)
-        }
+        self.didCaptureVideo?(outputFileURL)
         timer.invalidate()
     }
 }

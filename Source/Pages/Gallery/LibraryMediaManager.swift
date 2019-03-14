@@ -65,7 +65,7 @@ class LibraryMediaManager {
         }
     }
     
-    func fetchVideoUrlAndCrop(for videoAsset: PHAsset, cropRect: CGRect, callback: @escaping (URL) -> Void) {
+    func fetchVideoUrlAndCrop(for videoAsset: PHAsset, normalizedCropRect: CGRect, callback: @escaping (URL) -> Void) {
         let videosOptions = PHVideoRequestOptions()
         videosOptions.isNetworkAccessAllowed = true
         imageManager?.requestAVAsset(forVideo: videoAsset, options: videosOptions) { asset, _, _ in
@@ -101,6 +101,7 @@ class LibraryMediaManager {
                 
                 // 3. Adding the layer instructions. Transforming
                 
+                let cropRect = LibraryMediaManager.cropRect(for: videoTrack, normalizedCropRect: normalizedCropRect)
                 let layerInstructions = AVMutableVideoCompositionLayerInstruction(assetTrack: videoCompositionTrack)
                 layerInstructions.setTransform(videoTrack.getTransform(cropRect: cropRect), at: CMTime.zero)
                 layerInstructions.setOpacity(1.0, at: CMTime.zero)
@@ -172,6 +173,27 @@ class LibraryMediaManager {
         for s in self.currentExportSessions {
             s.cancelExport()
         }
+    }
+
+    static private func cropRect(for track: AVAssetTrack, normalizedCropRect: CGRect) -> CGRect {
+        var rotation = track.preferredTransform
+        rotation.tx = 0
+        rotation.ty = 0
+
+        let rotatedSize = CGPoint(x: track.naturalSize.width, y: track.naturalSize.height).applying(rotation)
+        let trackWidth = abs(rotatedSize.x)
+        let trackHeight = abs(rotatedSize.y)
+
+        let x: CGFloat = normalizedCropRect.origin.x * CGFloat(trackWidth)
+        let y: CGFloat = normalizedCropRect.origin.y * CGFloat(trackHeight)
+        var width = (CGFloat(trackWidth) * normalizedCropRect.width).rounded(.toNearestOrEven)
+        var height = (CGFloat(trackHeight) * normalizedCropRect.height).rounded(.toNearestOrEven)
+
+        // round to lowest even number
+        width = (width.truncatingRemainder(dividingBy: 2) == 0) ? width : width - 1
+        height = (height.truncatingRemainder(dividingBy: 2) == 0) ? height : height - 1
+
+        return CGRect(x: x, y: y, width: width, height: height)
     }
 }
 

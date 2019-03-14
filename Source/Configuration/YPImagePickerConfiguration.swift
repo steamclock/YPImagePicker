@@ -155,6 +155,9 @@ public struct YPImagePickerConfiguration {
 public struct YPConfigLibrary {
     
      public var options: PHFetchOptions? = nil
+
+    /// Set this to true to hide the crop to square button in the library view
+    public var hideCropToSquare = false
     
     /// Set this to true if you want to force the library output to be a squared image. Defaults to false
     public var onlySquare = false
@@ -175,6 +178,10 @@ public struct YPConfigLibrary {
     /// Set the number of items per row in collection view. Defaults to 4.
     public var numberOfItemsInRow: Int = 4
 
+    /// Defines if the video should be automatically cropped to square when added.
+    /// Defaults to true
+    public var shouldCropToSquare: Bool = true
+
     /// Set the spacing between items in collection view. Defaults to 1.0.
     public var spacingBetweenItems: CGFloat = 1.0
 
@@ -188,6 +195,9 @@ public struct YPConfigVideo {
     /// Choose the videoCompression.  Defaults to AVAssetExportPresetHighestQuality
     public var compression: String = AVAssetExportPresetHighestQuality
     
+    /// Choose whether users can select a cover while trimming a clip.
+    public var coverSelection: Bool = true
+
     /// Choose the result video extension if you trim or compress a video. Defaults to mov.
     public var fileType: AVFileType = .mov
     
