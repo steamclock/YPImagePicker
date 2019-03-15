@@ -374,7 +374,8 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
                                          callback: @escaping (_ videoURL: URL) -> Void) {
         if fitsVideoLengthLimits(asset: asset) == true {
             delegate?.libraryViewStartedLoading()
-            let normalizedCropRect = withCropRect ?? v.currentCropRect()
+            // Calling DispatchQueue.main while already on the main thread will cause a crash
+            let normalizedCropRect = withCropRect ?? (Thread.isMainThread ? v.currentCropRect() : DispatchQueue.main.sync { v.currentCropRect() })
             mediaManager.fetchVideoUrlAndCrop(for: asset, normalizedCropRect: normalizedCropRect, callback: callback)
         }
     }
