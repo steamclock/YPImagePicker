@@ -374,7 +374,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
                                          callback: @escaping (_ videoURL: URL) -> Void) {
         if fitsVideoLengthLimits(asset: asset) == true {
             delegate?.libraryViewStartedLoading()
-            let normalizedCropRect = withCropRect ?? (Thread.isMainThread ? v.currentCropRect() : DispatchQueue.main.sync { v.currentCropRect() })
+            let normalizedCropRect = withCropRect ?? v.currentCropRect()
             mediaManager.fetchVideoUrlAndCrop(for: asset, normalizedCropRect: normalizedCropRect, callback: callback)
         }
     }
@@ -443,8 +443,8 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
                         })
                     }
 
-                    if asset.duration > 300 {
-                        DispatchQueue.main.async {
+                    DispatchQueue.main.async {
+                        if asset.duration > 300 {
                             let longVideoAlert = UIAlertController(title: "Long Video", message: "This clip could take several minutes to process.", preferredStyle: .alert)
                             longVideoAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
                             longVideoAlert.addAction(UIAlertAction(title: "Start", style: .default) { _ in
@@ -452,11 +452,10 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
                             })
 
                             self.present(longVideoAlert, animated: true, completion: nil)
+                        } else {
+                            checkLengthAndCrop()
                         }
-                    } else {
-                        checkLengthAndCrop()
                     }
-
                 case .image:
                     self.fetchImageAndCrop(for: asset) { image, exifMeta in
                         DispatchQueue.main.async {
