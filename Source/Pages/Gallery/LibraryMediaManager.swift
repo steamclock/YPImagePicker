@@ -9,6 +9,12 @@
 import UIKit
 import Photos
 
+// For determining what portion of the progress bar to use for download (this value)
+// and what to use for encoding (the rest). 20% seems to be a reasoanble value on
+// a modern device on fast WiFi, but could be off if the device is slower or network
+// is slower
+private let downloadProgressPercentage: Float = 0.2
+
 class LibraryMediaManager {
     
     weak var v: YPLibraryView?
@@ -68,6 +74,12 @@ class LibraryMediaManager {
     func fetchVideoUrlAndCrop(for videoAsset: PHAsset, normalizedCropRect: CGRect, callback: @escaping (URL) -> Void) {
         let videosOptions = PHVideoRequestOptions()
         videosOptions.isNetworkAccessAllowed = true
+        videosOptions.progressHandler = { [weak self] progress, _, _, _ in
+            DispatchQueue.main.async {
+                self?.updateDownloadProgress(progress)
+            }
+        }
+
         imageManager?.requestAVAsset(forVideo: videoAsset, options: videosOptions) { asset, _, _ in
             do {
                 guard let asset = asset else { print("⚠️ PHCachingImageManager >>> Don't have the asset"); return }
@@ -154,10 +166,12 @@ class LibraryMediaManager {
     }
     
     @objc func onTickExportTimer(sender: Timer) {
+        let encodeProgressPercentage = 1.0 - downloadProgressPercentage
+
         if let exportSession = sender.userInfo as? AVAssetExportSession {
             if let v = v {
                 if exportSession.progress > 0 {
-                    v.updateProgress(exportSession.progress)
+                    v.updateProgress(downloadProgressPercentage + (Float(exportSession.progress) * encodeProgressPercentage))
                 }
             }
             
@@ -166,6 +180,12 @@ class LibraryMediaManager {
                 v?.updateProgress(0)
                 self.exportTimer = nil
             }
+        }
+    }
+
+    func updateDownloadProgress(_ progress: Double) {
+        if let v = v {
+            v.updateProgress(Float(progress) * downloadProgressPercentage)
         }
     }
     
