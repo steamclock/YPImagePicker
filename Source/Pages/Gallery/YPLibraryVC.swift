@@ -234,6 +234,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
             }), let videoCollection = videoAlbum.collection {
                 mediaManager.collection = videoCollection
                 mediaManager.fetchResult = PHAsset.fetchAssets(in: videoCollection, options: options)
+                title = "Videos"
             } else {
                 mediaManager.fetchResult = PHAsset.fetchAssets(with: options)
             }
