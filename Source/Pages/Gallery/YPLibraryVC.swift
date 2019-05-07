@@ -227,7 +227,16 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
         if let collection = mediaManager.collection {
             mediaManager.fetchResult = PHAsset.fetchAssets(in: collection, options: options)
         } else {
-            mediaManager.fetchResult = PHAsset.fetchAssets(with: options)
+            let albums = YPAlbumsManager().fetchAlbums()
+
+            if let videoAlbum = albums.first(where: { (album) -> Bool in
+                album.collection?.assetCollectionSubtype == .smartAlbumVideos
+            }), let videoCollection = videoAlbum.collection {
+                mediaManager.collection = videoCollection
+                mediaManager.fetchResult = PHAsset.fetchAssets(in: videoCollection, options: options)
+            } else {
+                mediaManager.fetchResult = PHAsset.fetchAssets(with: options)
+            }
         }
                 
         if mediaManager.fetchResult.count > 0 {
