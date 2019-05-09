@@ -42,10 +42,7 @@ public class YPVideoView: UIView {
                                                  action: #selector(singleTap))
         singleTapGR.numberOfTapsRequired = 1
         addGestureRecognizer(singleTapGR)
-        
-        // Loop playback
-        addReachEndObserver()
-    
+
         playerView.alpha = 0
         playImageView.alpha = 0.8
         playerLayer.videoGravity = .resizeAspect
@@ -95,9 +92,11 @@ extension YPVideoView {
         default:
             return
         }
-        
+
         playerLayer.player = player
         playerView.alpha = 1
+
+        addReachEndObserver()
     }
     
     /// Convenience func to pause or unpause video dependely of state
@@ -148,16 +147,24 @@ extension YPVideoView {
     }
     
     public func addReachEndObserver() {
+        guard let item = player.currentItem else {
+            return
+        }
+
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(playerItemDidReachEnd(_:)),
                                                name: .AVPlayerItemDidPlayToEndTime,
-                                               object: player)
+                                               object: item)
     }
     
     /// Removes the observer for AVPlayerItemDidPlayToEndTime. Could be needed to implement own observer
     public func removeReachEndObserver() {
+        guard let item = player.currentItem else {
+            return
+        }
+
         NotificationCenter.default.removeObserver(self,
                                                   name: .AVPlayerItemDidPlayToEndTime,
-                                                  object: player)
+                                                  object: item)
     }
 }
